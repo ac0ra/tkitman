@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# SOURCE
+# to instantiate with this, add:
+# tmp=`pwd`; # cd TKITMAN_PATH/ && . tkitman-init2 && cd $tmp
+# to your bashrc
+
+_tkitman_resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+_tkitman_abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+  
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(_tkitman_resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+_tkitman_source() {
+  local out=`grep $'#[ \t]*SOURCE' $1`
+  if [ "$out" == "" ]; then
+    echo "0"
+    return
+  fi
+  echo "1"
+}
+
+export TKITMAN_PATH=`pwd`
+
+case "$0" in
+bash | zsh)
+  source ../completions/tkitman.$0
+  ;;
+-bash )
+  source ../completions/tkitman.bash
+  ;;
+esac
+
+function tkitman() {
+    local original_path=$PATH
+    local source_command=0
+    export PATH="$TKITMAN_PATH:$PATH"
+
+    libexec_path=$TKITMAN_PATH
+
+    command="$1"
+    case "$command" in
+    "" | "-h" | "--help" )
+      tkitman-help
+      ;;
+    * )
+      command_path="$(command -v "tkitman-$command" || true)"
+      if [ ! -x "$command_path" ]; then
+        echo "tkitman: no such command \`$command'"
+      else
+          source_command=$(_tkitman_source $command_path)
+          shift
+          if [[ "$1" -eq "--complete" ]]; then
+              $command_path "$@"
+          elif [[ "$source_command" -eq 0 ]]; then
+              $command_path "$@"
+          else 
+              . $command_path "$@"
+          fi
+      fi
+      ;;
+    esac
+    export PATH=$original_path
+}
