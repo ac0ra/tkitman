@@ -1,9 +1,10 @@
-.PHONY: test upload clean bootstrap
+.PHONY: test upload clean bootstrap build
 
 SHELL=/bin/bash
 
-_build_bin:
-	@for a in $$(find ./src/bin -type d); do \
+
+_build:
+	@for a in $$(find ./src -type d); do \
 	if [ -d $$a ]; then \
 	echo "processing folder $$a"; \
 	if [ -f $$a/Makefile ]; then \
@@ -14,15 +15,7 @@ _build_bin:
 	@echo "Done!"
 
 
-test: _activate
-
-
-build: _build_bin	
-
-
-_create_commands:
-	for n in $(find ./src/bin -name "*.py"); do cp $n ./bin/rollout-$(basename $n | sed s'/\.py//'g); done
-	chmod +x ./bin/rollout-*
+build: _build
 
 upload: 
 	make clean
@@ -34,7 +27,8 @@ register:
 clean:
 	rm -rf venv
 	rm -rf build/*
-	rm -rf bin/rollout-*
+	rm -rf bin/tkitman-*
+	rm -rf install.sh
 	find . -name '*.pyc' -delete
 	find . -name '*.pyo' -delete
 	
