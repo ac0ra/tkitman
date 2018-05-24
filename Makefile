@@ -17,6 +17,17 @@ _build:
 
 build: _build
 
+install_meta:
+	@for a in $$(find ./src -type d); do \
+	if [ -d $$a ]; then \
+	echo "processing folder $$a"; \
+	if [ -f $$a/Makefile ]; then \
+	$(MAKE) -C $$a install_meta; \
+	fi; \
+	fi; \
+	done;
+	@echo "Done!"
+
 upload: 
 	make clean
 

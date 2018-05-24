@@ -13,11 +13,13 @@ __version__ = '0'
 #IMPORTS
 import argparse
 import sys
+import msgpack
+import yaml
 #
 
 
 
-class ROLL_Pro_Menu(object):
+class TK_Query_Menu(object):
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -33,29 +35,41 @@ The most commonly used query commands are:
         parser.add_argument('command', help='Subcommand to run')
         args = parser.parse_args(sys.argv[1:2])
         if not hasattr(self, args.command):
-            print 'Unrecognized command'
+            print('Unrecognized command')
             parser.print_help()
             exit(1)
         getattr(self, args.command)()
 
-    def add(self):
+    def list(self):
         parser = argparse.ArgumentParser(description='List a property')
-        parser.add_argument('list', action='store_true')
+        parser.add_argument('-f','--file',action='store',help='Filename to query if desired (WILL BE REMOVED)')
+        parser.add_argument('-y','--yaml',action='store',help='Print yaml?')
+        parser.add_argument('list',action='store',help='list to access')
         args = parser.parse_args(sys.argv[2:])
+        if not (args.file):
+            if args.list == 'toolkits':
+                import tkitman
+                tk = tkitman.config()
+                print('::List of toolkits::\n'+yaml.dump(msgpack.unpackb(tk.core['toolkit_listfile'])))
+        else:
+            with open(args.file,'rb') as msgpackf:
+                list = msgpack.unpackb(msgpackf.read(), raw = False)
+                print('::FILE LIST::'+yaml.dump(list))
+                
 
-    def remove(self):
-        parser = argparse.ArgumentParser(description='Remove a profile.')
+    def get(self):
+        parser = argparse.ArgumentParser(description='Get a configuration setting')
         parser.add_argument('profile')
         args = parser.parse_args(sys.argv[2:])
         print('weee')
 
-    def edit(self):
+    def search(self):
         parser = argparse.ArgumentParser(description='Modify profile config.')
         parser.add_argument('--insert_argument_here')
         args = parser.parse_args(sys.argv[2:])
         print('weee')
 
-    def export(self):
+    def info(self):
         parser = argparse.ArgumentParser(description='Export profile to a file, (config only, or config and scripts).')
         parser.add_argument('--insert_argument_here')
         args = parser.parse_args(sys.argv[2:])
@@ -63,4 +77,4 @@ The most commonly used query commands are:
 
 
 if __name__ == '__main__':
-    Roll_Pro_Menu()
+    TK_Query_Menu()
