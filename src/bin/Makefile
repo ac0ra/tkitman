@@ -9,8 +9,8 @@ build:
 	chmod +x ../../install.sh
 
 install_meta:
-	cp query.py $$HOME/.toolkits/.tkit/bin/tkitman-query
-	cp toolkit.py $$HOME/.toolkits/.tkit/bin/tkitman-toolkit
-	cp update.py $$HOME/.toolkits/.tkit/bin/tkitman-update
-	cp install.sh $$HOME/.toolkits/.tkit/bin/tkitman-install
-	chmod +x $$HOME/.toolkits/.tkit/bin/tkitman-{query,toolkit,update,install}
+	cp query.py $$HOME/.toolkits/.tkit-bin/tkitman-query
+	cp toolkit.py $$HOME/.toolkits/.tkit-bin/tkitman-toolkit
+	cp update.py $$HOME/.toolkits/.tkit-bin/tkitman-update
+	cp install.sh $$HOME/.toolkits/.tkit-bin/tkitman-install
+	chmod +x $$HOME/.toolkits/.tkit-bin/tkitman-{query,toolkit,update,install}
