@@ -27,6 +27,10 @@ install_meta:
 	fi; \
 	done;
 	@echo "Done!"
+	cp ./bin/* $$HOME/.toolkits/.meta/bin/
+	cp ./libexec/* $$HOME/.toolkits/.meta/libexec
+	cp ./completions/* $$HOME/.toolkits/.meta/completions/
+	cp ./doc/* $$HOME/.toolkits/.meta/doc/
 
 upload: 
 	make clean
